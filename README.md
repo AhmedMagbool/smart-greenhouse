@@ -6,9 +6,8 @@ A full-stack IoT project for monitoring greenhouse conditions using real-time se
 
 <img width="1919" height="876" alt="image" src="https://github.com/user-attachments/assets/2bdb3f50-aa85-462b-8348-627fea88b227" />
 
-> 🔴 Live Demo: [GitHub Pages Link](#)  
-> 🎬 Dashboard Preview:  
-> ![Dashboard Preview](preview.png)
+> 🔴 Live Demo: [GitHub Pages Link](https://ahmedmagbool.github.io/Smart-GreenhouseDashboard/)  
+(preview.png)
 
 ---
 
