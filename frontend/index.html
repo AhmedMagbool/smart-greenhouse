@@ -1,0 +1,42 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🌿 Smart Greenhouse Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <img src="https://tuwaiq.edu.sa/img/logo.svg" alt="Tuwaiq Academy" width="160" />
+    <h1 id="title">🌿 Smart Greenhouse Dashboard</h1>
+    <div class="controls">
+      <button id="langBtn" onclick="toggleLanguage()">عربي</button>
+      <button id="themeBtn" onclick="toggleTheme()">🌙</button>
+    </div>
+  </header>
+
+  <div class="cards">
+    <div class="card"><div id="tempLabel">🌡️ Temperature</div><h2 id="tempVal">--</h2></div>
+    <div class="card"><div id="humLabel">💧 Humidity</div><h2 id="humVal">--</h2></div>
+    <div class="card"><div id="lightLabel">💡 Light</div><h2 id="lightVal">--</h2></div>
+    <div class="card"><div id="waterLabel">🌊 Water Level</div><h2 id="waterVal">--</h2></div>
+    <div class="card"><div id="soilLabel">🌱 Soil</div><h2 id="soilVal">--</h2></div>
+    <div class="card"><div id="timeLabel">⏰ Time</div><h2 id="timeVal">--</h2></div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="chart"></canvas>
+  </div>
+
+  <footer id="footer">
+    Made by <a href="#">Ahmed</a> & <a href="#">Abdulmajeed</a>
+  </footer>
+
+  <script type="module" src="script.js"></script>
+  <script type="module" src="chart.js"></script>
+  <script type="module" src="ui.js"></script>
+    <script type="module" src="main.js"></script>
+
+</body>
+</html>
