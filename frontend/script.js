@@ -1,6 +1,6 @@
 import { currentLang, toArabicNumber } from './ui.js';
 
-const apiURL = "http://127.0.0.1:5000/api/sensors/latest";
+const apiURL = "https://smart-greenhouse-2aaw.onrender.com";
 
 function formatTime(dateStr) {
   const date = new Date(dateStr);
