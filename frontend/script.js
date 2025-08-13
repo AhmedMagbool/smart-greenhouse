@@ -1,47 +1,68 @@
-import { currentLang, toArabicNumber } from './ui.js';
+import { formatTime, formatNumber, t } from "./ui.js"
 
-const apiURL = "https://smart-greenhouse-2aaw.onrender.com";
-
-function formatTime(dateStr) {
-  const date = new Date(dateStr);
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit', 
-                    hour: '2-digit', minute: '2-digit', second: '2-digit' };
-  return date.toLocaleString(currentLang === 'ar' ? 'ar-EG' : 'en-US', options);
-}
+// ✅ إصلاح الرابط ليشمل endpoint الصحيح
+const apiURL = "https://smart-greenhouse-2aaw.onrender.com/api/sensors/latest"
 
 function fetchLatestData() {
-  fetch(apiURL)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("tempVal").innerText = data.temperature !== undefined
-        ? (currentLang === 'ar' ? toArabicNumber(data.temperature) : data.temperature) + " °C"
-        : "--";
+  // ✅ إضافة timeout وتحسين error handling
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 seconds timeout
 
-      document.getElementById("humVal").innerText = data.humidity !== undefined
-        ? (currentLang === 'ar' ? toArabicNumber(data.humidity) : data.humidity) + " %"
-        : "--";
-
-      document.getElementById("lightVal").innerText = data.light !== undefined
-        ? (currentLang === 'ar' ? toArabicNumber(data.light) : data.light)
-        : "--";
-
-      document.getElementById("waterVal").innerText = data.waterLevel !== undefined
-        ? (currentLang === 'ar' ? toArabicNumber(data.waterLevel) : data.waterLevel)
-        : "--";
-
-      document.getElementById("soilVal").innerText = data.soilMoisture !== undefined
-        ? (data.soilMoisture === 0 ? (currentLang === 'ar' ? "جافة" : "dry") : (currentLang === 'ar' ? "رطبة" : "wet"))
-        : "--";
-
-      document.getElementById("timeVal").innerText = data.timestamp
-        ? (currentLang === 'ar' ? toArabicNumber(formatTime(data.timestamp)) : formatTime(data.timestamp))
-        : "--";
+  fetch(apiURL, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    signal: controller.signal,
+  })
+    .then((res) => {
+      clearTimeout(timeoutId)
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`)
+      }
+      return res.json()
     })
-    .catch(err => {
-      console.error("❌ Error fetching sensor data:", err);
-    });
+    .then((data) => {
+      console.log("✅ Data received:", data) // للتشخيص
+
+      // ✅ تحسين عرض البيانات مع التحقق من وجودها
+      document.getElementById("tempVal").innerText =
+        data.temperature !== undefined ? formatNumber(data.temperature) + " °C" : "--"
+
+      document.getElementById("humVal").innerText =
+        data.humidity !== undefined ? formatNumber(data.humidity) + " %" : "--"
+
+      document.getElementById("lightVal").innerText = data.light !== undefined ? formatNumber(data.light) : "--"
+
+      document.getElementById("waterVal").innerText =
+        data.waterLevel !== undefined ? formatNumber(data.waterLevel) : "--"
+
+      document.getElementById("soilVal").innerText =
+        data.soilMoisture !== undefined ? (data.soilMoisture === 0 ? t("dry") : t("wet")) : "--"
+
+      document.getElementById("timeVal").innerText = data.timestamp ? formatTime(data.timestamp) : "--"
+
+      // ✅ إضافة مؤشر للاتصال الناجح
+      document.body.classList.remove("connection-error")
+    })
+    .catch((err) => {
+      clearTimeout(timeoutId)
+      console.error("❌ Error fetching sensor data:", err)
+
+      // ✅ إضافة مؤشر بصري للخطأ
+      document.body.classList.add("connection-error")
+
+      // ✅ عرض رسالة خطأ للمستخدم
+      const errorMsg = t("connectionError")
+      document.getElementById("tempVal").innerText = errorMsg
+    })
 }
 
+// ✅ تقليل تكرار الطلبات لتوفير البيانات
+setInterval(fetchLatestData, 5000) // كل 5 ثواني بدلاً من 3
+fetchLatestData()
 
-setInterval(fetchLatestData, 3000);
-fetchLatestData();
+// ✅ Listen for language changes to update data display
+window.addEventListener("languageChanged", () => {
+  fetchLatestData() // Re-fetch to update number formatting
+})
